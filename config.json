@@ -1,5 +1,5 @@
 {
-    "stock_symbol": "VTI",
-    "fetching_data": true,
+    "stock_symbol": "NVDA",
+    "fetching_data": false,
     "time_frame": "5Y"
 }

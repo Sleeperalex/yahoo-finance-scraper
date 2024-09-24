@@ -16,35 +16,34 @@ def update_data(stock_symbol : str, raw_data_file : str, time_frame : str):
         options.add_argument("--log-level=3")
         options.add_argument('--no-proxy-server')
         options.add_experimental_option("excludeSwitches", ["enable-logging"])
-
+        #options.add_argument(f'user-agent={user_agent.random}')
         driver = webdriver.Chrome(options=options)
 
         driver.get("https://finance.yahoo.com/quote/"+stock_symbol+"/history")
-
-
-        # click on the button refuse cookies
-        button = driver.find_element(by=By.XPATH, value='/html/body/div/div/div/div/form/div[2]/div[2]/button[2]')
+        #time.sleep(50000)
+        # click on the button refuse cookies            
+        button = driver.find_element(by=By.XPATH, value="/html/body/div/div/div/div/form/div[2]/div[2]/button[2]")
         time.sleep(2)
         button.click()
 
-        button = driver.find_element(by=By.XPATH, value="/html/body/div[1]/main/section/section/section/article/div[2]/div[1]/div[1]/button")
+        # click on the button to select time frame
+        # tertiary-btn fin-size-small menuBtn rounded yf-1al6vaf
+                                                        #/html/body/div[2]/main/section/section/section/article/div[1]/div[1]/div[1]/button/span
+        button = driver.find_element(by=By.XPATH, value="/html/body/div[2]/main/section/section/section/article/div[1]/div[1]/div[1]/button")
         time.sleep(2)
         button.click()
-
 
         tab = ['1D', '5D', '3M', '6M', '1Y', '2Y', '5Y', 'MAX']
-
+        
         # click on time frame
         button_number = tab.index(time_frame.upper())+1
-        button = driver.find_element(by=By.XPATH, value='/html/body/div[1]/main/section/section/section/article/div[2]/div[1]/div[1]/div/div/div[2]/section/div[1]/button['+str(button_number)+']')
-        time.sleep(2)
+        button = driver.find_element(by=By.XPATH, value='/html/body/div[2]/main/section/section/section/article/div[1]/div[1]/div[1]/div/div/div[2]/section/div[1]/button['+str(button_number)+']')
         button.click()
-        time.sleep(2)
 
         # fetch the data
         file=open(raw_data_file,"w")
         file.write("")
-        data = driver.find_elements(by=By.TAG_NAME, value='tbody')
+        data = driver.find_elements(by=By.CLASS_NAME, value='yf-ewueuo')
         for item in data:
             file.write(item.text)
 
@@ -54,18 +53,32 @@ def update_data(stock_symbol : str, raw_data_file : str, time_frame : str):
         driver.quit()
         subprocess.call("TASKKILL /f  /IM  CHROME.EXE")
     except:
+        print("Error while updating data")
         pass
 
-
-def create_df(raw_data_file : str) -> pd.DataFrame:
+def transform(raw_data_file : str) -> list[str]:
 
     file = open(raw_data_file, "r")
     raw_data = file.readlines()
+    raw_data.remove(raw_data[0])
+    raw_data.remove(raw_data[0])
+    raw_data.remove(raw_data[0])
+    cleaned_lines = []
+    for line in raw_data:
+        if "Date" in line:
+            break
+        cleaned_lines.append(line)
+    file.close()
+    return cleaned_lines
+
+
+
+def create_df(raw_data_file : str) -> pd.DataFrame:
+    raw_data = transform(raw_data_file)
     data = [[] for _ in range(len(raw_data))]
     for i in range(len(raw_data)):
         raw_data[i] = raw_data[i].replace("\n", "")
         data[i] = data_to_table(raw_data[i])
-    file.close()
 
     data = [row for row in data if "Dividend" not in row]
     data = [row for row in data if "Stock" not in row]
@@ -184,6 +197,7 @@ def main():
         df = create_df(raw_data_file)
         #df = indicators(df)
         print(df)
+        df.to_csv('stock_data.csv', index=False)
         return df
     else:
         print("No data found for " + stock_symbol)
