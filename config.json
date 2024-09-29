@@ -1,5 +1,5 @@
 {
-    "stock_symbol": "NVDA",
-    "fetching_data": false,
+    "stock_symbol": "BTC-USD",
+    "fetching_data": true,
     "time_frame": "5Y"
 }

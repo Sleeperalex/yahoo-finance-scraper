@@ -16,28 +16,27 @@ def update_data(stock_symbol : str, raw_data_file : str, time_frame : str):
         options.add_argument("--log-level=3")
         options.add_argument('--no-proxy-server')
         options.add_experimental_option("excludeSwitches", ["enable-logging"])
-        #options.add_argument(f'user-agent={user_agent.random}')
+        options.add_argument(f'user-agent={user_agent.random}')
         driver = webdriver.Chrome(options=options)
 
+        # go to yahoo finance
         driver.get("https://finance.yahoo.com/quote/"+stock_symbol+"/history")
-        #time.sleep(50000)
+
         # click on the button refuse cookies            
         button = driver.find_element(by=By.XPATH, value="/html/body/div/div/div/div/form/div[2]/div[2]/button[2]")
         time.sleep(2)
         button.click()
 
         # click on the button to select time frame
-        # tertiary-btn fin-size-small menuBtn rounded yf-1al6vaf
-                                                        #/html/body/div[2]/main/section/section/section/article/div[1]/div[1]/div[1]/button/span
         button = driver.find_element(by=By.XPATH, value="/html/body/div[2]/main/section/section/section/article/div[1]/div[1]/div[1]/button")
         time.sleep(2)
         button.click()
 
-        tab = ['1D', '5D', '3M', '6M', '1Y', '2Y', '5Y', 'MAX']
-        
+        #time.sleep(200000)
         # click on time frame
+        tab = ['1D', '5D', '3M', '6M', '1Y', '2Y', '5Y', 'MAX']
         button_number = tab.index(time_frame.upper())+1
-        button = driver.find_element(by=By.XPATH, value='/html/body/div[2]/main/section/section/section/article/div[1]/div[1]/div[1]/div/div/div[2]/section/div[1]/button['+str(button_number)+']')
+        button = driver.find_element(by=By.XPATH, value='/html/body/div[2]/main/section/section/section/article/div[1]/div[1]/div[1]/div/div/section/div[1]/button['+str(button_number)+']')
         button.click()
 
         # fetch the data
