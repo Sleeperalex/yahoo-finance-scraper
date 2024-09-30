@@ -1,5 +1,5 @@
 {
     "stock_symbol": "BTC-USD",
-    "fetching_data": true,
-    "time_frame": "5Y"
+    "fetching_data": false,
+    "time_frame": "max"
 }

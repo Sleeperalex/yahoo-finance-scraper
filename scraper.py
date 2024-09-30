@@ -59,9 +59,8 @@ def transform(raw_data_file : str) -> list[str]:
 
     file = open(raw_data_file, "r")
     raw_data = file.readlines()
-    raw_data.remove(raw_data[0])
-    raw_data.remove(raw_data[0])
-    raw_data.remove(raw_data[0])
+    while "," not in raw_data[0]:
+        raw_data.remove(raw_data[0])
     cleaned_lines = []
     for line in raw_data:
         if "Date" in line:
