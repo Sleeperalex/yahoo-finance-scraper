@@ -32,7 +32,6 @@ def update_data(stock_symbol : str, raw_data_file : str, time_frame : str):
         time.sleep(2)
         button.click()
 
-        #time.sleep(200000)
         # click on time frame
         tab = ['1D', '5D', '3M', '6M', '1Y', '2Y', '5Y', 'MAX']
         button_number = tab.index(time_frame.upper())+1
@@ -167,7 +166,6 @@ def indicators(df : pd.DataFrame) -> pd.DataFrame:
 
 
 def main():
-
     print("\n-----------------------------------------------------------------------------------------------\n")
 
     # open the config file
@@ -205,4 +203,5 @@ def main():
 
 
 if __name__ == "__main__":
+    os.chdir(os.path.dirname(os.path.abspath(__file__)))
     main()
